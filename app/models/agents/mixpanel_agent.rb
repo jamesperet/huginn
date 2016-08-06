@@ -13,23 +13,22 @@ module Agents
 
     description do
       <<-MD
-        The Mixpanel Agent checks for analytics data and returns an event.
+        The Mixpanel Agent checks for analytics data and returns how many times that event was triggerd.
 
-        # Ordering Events
+        Specify the **API Key** and the **Secret Key** for the mixpanel project that you are querying. If you want to filter events using property, it is necessary to specify the value. The **time** property is an *integer* and the interval can be ```minute```, ```day```, ```month```, ```year```.
 
-        #{description_events_order}
-
-        In this Agent, the default value for `events_order` is `#{DEFAULT_EVENTS_ORDER.to_json}`.
       MD
     end
 
     def default_options
       {
+        'api_key' => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        'secret_key' => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         'event_name' => "Page Visit",
-        'property' => "Page",
-        'value' => "home",
         'time' => 24,
-        'interval' => 'hour'
+        'interval' => 'hour',
+        'property' => "Page",
+        'value' => "home"
       }
     end
 
@@ -54,8 +53,10 @@ module Agents
     def validate_options
       errors.add(:base, "event_name is required") unless options['event_name'].present?
 
-      unless options['property'].present? && options['value'].present?
-        errors.add(:base, "Please provide 'property' and 'value'")
+      if options['property'].present? || options['value'].present?
+        unless options['property'].present? && options['value'].present?
+          errors.add(:base, "Please provide 'property' and 'value'")
+        end
       end
 
       validate_web_request_options!
@@ -81,8 +82,8 @@ module Agents
 
     def mixpanel_config
         {
-          api_key: ENV['MIXPANEL_API_KEY'],
-          api_secret: ENV['MIXPANEL_SECRET_KEY']
+          api_key: options['api_key'],
+          api_secret: options['secret_key']
         }
     end
 
