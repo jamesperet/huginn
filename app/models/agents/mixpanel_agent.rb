@@ -15,7 +15,7 @@ module Agents
       <<-MD
         The Mixpanel Agent checks for analytics data and returns how many times that event was triggerd.
 
-        Specify the **API Key** and the **Secret Key** for the mixpanel project that you are querying. If you want to filter events using property, it is necessary to specify the value. The **time** property is an *integer* and the interval can be ```minute```, ```day```, ```month```, ```year```.
+        Specify the **API Key** and the **Secret Key** for the mixpanel project that you are querying. If you want to filter events using property, it is necessary to specify the value. The **time** property is an *integer* and the interval can be ```minute```, ```day```, ```month```, ```year```. For automaticly checking if the agent is working, set a threshold with ```expected_update_period_in_days```.
 
       MD
     end
@@ -28,7 +28,8 @@ module Agents
         'time' => 24,
         'interval' => 'hour',
         'property' => "Page",
-        'value' => "home"
+        'value' => "home",
+        'expected_update_period_in_days' => 1
       }
     end
 
@@ -47,7 +48,7 @@ module Agents
     MD
 
     def working?
-      received_event_without_error? && !recent_error_logs?
+      event_created_within?(interpolated['expected_update_period_in_days']) && !recent_error_logs?
     end
 
     def validate_options
