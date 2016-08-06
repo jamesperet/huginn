@@ -84,7 +84,7 @@ module Agents
           api_key: ENV['MIXPANEL_API_KEY'],
           api_secret: ENV['MIXPANEL_SECRET_KEY']
         }
-      end
+    end
 
     def mixpanel_client
       @mixpanel_client ||= Mixpanel::Client.new(mixpanel_config())
