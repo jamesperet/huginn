@@ -47,7 +47,7 @@ module Agents
     MD
 
     def working?
-
+      received_event_without_error? && !recent_error_logs?
     end
 
     def validate_options
