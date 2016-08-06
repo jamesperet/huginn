@@ -23,7 +23,7 @@ module Agents
     def default_options
       {
         'api_key' => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        'secret_key' => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        'secret_key' => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         'event_name' => "Page Visit",
         'time' => 24,
         'interval' => 'hour',
