@@ -48,7 +48,7 @@ module Agents
     MD
 
     def working?
-      event_created_within?(interpolated['expected_update_period_in_days']) && !recent_error_logs?
+      event_created_within?(options['expected_update_period_in_days']) && !recent_error_logs?
     end
 
     def validate_options
