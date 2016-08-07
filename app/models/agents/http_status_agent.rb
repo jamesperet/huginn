@@ -73,12 +73,14 @@ module Agents
 
     def check_this_url(url, local_headers)
       # Track time
-      measured_result = TimeTracker.track { ping(url) }
+      start = Time.now.to_f
+      measured_result = ping(url)
+      total_time = Time.now.to_f - start
 
       current_status = measured_result.result ? measured_result.status.to_s : ''
       return if options['changes_only'] == 'true' && current_status == memory['last_status'].to_s
 
-      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => measured_result.elapsed_time }
+      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
 
       # Deal with failures
       if measured_result.result
@@ -107,26 +109,5 @@ module Agents
       nil
     end
   end
-
-  # Clock that cannot be set and represents monotonic time since
-    # some unspecified starting point.
-    #
-    # @!visibility private
-    GLOBAL_MONOTONIC_CLOCK = class_definition.new
-    private_constant :GLOBAL_MONOTONIC_CLOCK
-
-    # @!macro [attach] monotonic_get_time
-    #
-    #   Returns the current time a tracked by the application monotonic clock.
-    #
-    #   @return [Float] The current monotonic time when `since` not given else
-    #     the elapsed monotonic time between `since` and the current time
-    #
-    #   @!macro monotonic_clock_warning
-    def monotonic_time
-      GLOBAL_MONOTONIC_CLOCK.get_time
-    end
-
-    module_function :monotonic_time
 
 end
