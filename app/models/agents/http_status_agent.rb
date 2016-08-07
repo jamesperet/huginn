@@ -83,7 +83,7 @@ module Agents
       payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
 
       # Deal with failures
-      if measured_result.status != 0
+      if current_status != 0
         final_url = boolify(options['disable_redirect_follow']) ? url : measured_result.to_hash[:url]
         payload.merge!({ 'final_url' => final_url, 'redirected' => (url != final_url), 'response_received' => true, 'status' => current_status })
         # Deal with headers
@@ -97,7 +97,7 @@ module Agents
         memory['last_status'] = measured_result.status.to_s
       else
         create_event payload: payload
-        memory['last_status'] = nil
+        memory['last_status'] = 0
       end
 
     end
