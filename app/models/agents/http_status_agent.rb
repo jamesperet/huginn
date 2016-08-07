@@ -83,7 +83,7 @@ module Agents
       payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
 
       # Deal with failures
-      if measured_result
+      if measured_result.status != 0
         final_url = boolify(options['disable_redirect_follow']) ? url : measured_result.to_hash[:url]
         payload.merge!({ 'final_url' => final_url, 'redirected' => (url != final_url), 'response_received' => true, 'status' => current_status })
         # Deal with headers
@@ -104,9 +104,7 @@ module Agents
 
     def ping(url)
       result = faraday.get url
-      if result.status != 0
-        return result
-      end
+      result.status != 0 ? result : nil
     rescue
       nil
     end
