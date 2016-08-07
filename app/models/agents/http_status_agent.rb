@@ -109,3 +109,24 @@ module Agents
   end
 
 end
+
+# Clock that cannot be set and represents monotonic time since
+  # some unspecified starting point.
+  #
+  # @!visibility private
+  GLOBAL_MONOTONIC_CLOCK = class_definition.new
+  private_constant :GLOBAL_MONOTONIC_CLOCK
+
+  # @!macro [attach] monotonic_get_time
+  #
+  #   Returns the current time a tracked by the application monotonic clock.
+  #
+  #   @return [Float] The current monotonic time when `since` not given else
+  #     the elapsed monotonic time between `since` and the current time
+  #
+  #   @!macro monotonic_clock_warning
+  def monotonic_time
+    GLOBAL_MONOTONIC_CLOCK.get_time
+  end
+
+  module_function :monotonic_time
