@@ -104,7 +104,9 @@ module Agents
 
     def ping(url)
       result = faraday.get url
-      result.status != nil ? result : nil
+      if result.status != 0
+        return result
+      end
     rescue
       nil
     end
