@@ -1,3 +1,5 @@
+require 'uri'
+
 module Agents
   class WebhookAgent < Agent
     include WebRequestConcern
@@ -48,7 +50,9 @@ module Agents
     def receive_web_request(params, method, format)
       # check the secret
       secret = params.delete('secret')
-      return ["Not Authorized", 401] unless secret == options['secret']
+      puts secret
+      puts params
+      #return ["Not Authorized", 401] unless secret == options['secret']
 
       # check the verbs
       verbs = (interpolated['verbs'] || 'post').split(/,/).map { |x| x.strip.downcase }.select { |x| x.present? }
