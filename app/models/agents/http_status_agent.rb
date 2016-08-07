@@ -81,7 +81,7 @@ module Agents
       current_status = measured_result ? measured_result.status.to_s : ''
       return if options['changes_only'] == 'true' && current_status == memory['last_status'].to_s
 
-      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
+      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time, 'status' => measured_result.status.to_s }
 
       # Deal with failures
       if measured_result
