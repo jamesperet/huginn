@@ -76,19 +76,20 @@ module Agents
       start = Time.now.to_f
       measured_result = ping(url)
       total_time = Time.now.to_f - start
+      puts measured_result
 
-      current_status = measured_result.result ? measured_result.status.to_s : ''
+      current_status = measured_result ? measured_result.status.to_s : ''
       return if options['changes_only'] == 'true' && current_status == memory['last_status'].to_s
 
       payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
 
       # Deal with failures
-      if measured_result.result
-        final_url = boolify(interpolated['disable_redirect_follow']) ? url : measured_result.result.to_hash[:url]
+      if measured_result
+        final_url = boolify(interpolated['disable_redirect_follow']) ? url : measured_result.to_hash[:url]
         payload.merge!({ 'final_url' => final_url, 'redirected' => (url != final_url), 'response_received' => true, 'status' => current_status })
         # Deal with headers
         if local_headers.present?
-          header_results = measured_result.result.headers.select {|header, value| local_headers.include?(header)}
+          header_results = measured_result.headers.select {|header, value| local_headers.include?(header)}
           # Fill in headers that we wanted, but weren't returned
           local_headers.each { |header| header_results[header] = nil unless header_results.has_key?(header) }
           payload.merge!({ 'headers' => header_results })
