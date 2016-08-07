@@ -77,7 +77,7 @@ module Agents
       measured_result = ping(url)
       total_time = Time.now.to_f - start
 
-      current_status = measured_result.status.to_s
+      current_status = measured_result ? measured_result.status.to_s : 0
       return if options['changes_only'] == 'true' && current_status == memory['last_status'].to_s
 
       payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
