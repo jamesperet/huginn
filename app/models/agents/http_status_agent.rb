@@ -76,12 +76,11 @@ module Agents
       start = Time.now.to_f
       measured_result = ping(url)
       total_time = Time.now.to_f - start
-      puts measured_result
 
-      current_status = measured_result ? measured_result.status.to_s : ''
+      current_status = measured_result.status.to_s
       return if options['changes_only'] == 'true' && current_status == memory['last_status'].to_s
 
-      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time, 'status' => measured_result.status.to_s }
+      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
 
       # Deal with failures
       if measured_result
