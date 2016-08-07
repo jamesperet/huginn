@@ -32,6 +32,7 @@ module Agents
             "url": "...",
             "status": "...",
             "elapsed_time": "...",
+            "website_title",
             "headers": {
               "...": "..."
             }
@@ -46,6 +47,7 @@ module Agents
       {
         'url' => "http://google.com",
         'disable_redirect_follow' => "true",
+        'website_title' => ""
       }
     end
 
@@ -80,7 +82,7 @@ module Agents
       current_status = measured_result ? measured_result.status.to_s : 0
       return if options['changes_only'] == 'true' && current_status == memory['last_status'].to_s
 
-      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time }
+      payload = { 'url' => url, 'response_received' => false, 'elapsed_time' => total_time, 'website_title' => options['website_title'] }
 
       # Deal with failures
       if current_status != 0
