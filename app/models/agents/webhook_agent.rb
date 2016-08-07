@@ -52,9 +52,6 @@ module Agents
       secret = params.delete('secret')
       return ["Not Authorized", 401] unless secret == options['secret']
 
-      # check the verbs
-      verbs = (interpolated['verbs'] || 'post').split(/,/).map { |x| x.strip.downcase }.select { |x| x.present? }
-      return ["Please use #{verbs.join('/').upcase} requests only", 401] unless verbs.include?(method)
 
       [payload_for(params)].flatten.each do |payload|
         create_event(payload: payload)
