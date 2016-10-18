@@ -28,6 +28,7 @@ module Agents
           For example, "post,get" will enable POST and GET requests. Defaults
           to "post".
         * `response` - The response message to the request. Defaults to 'Event Created'.
+        * `code` - The response code to the request. Defaults to '201'.
         * `recaptcha_secret` - Setting this to a reCAPTCHA "secret" key makes your agent verify incoming requests with reCAPTCHA.  Don't forget to embed a reCAPTCHA snippet including your "site" key in the originating form(s).
         * `recaptcha_send_remote_addr` - Set this to true if your server is properly configured to set REMOTE_ADDR to the IP address of each visitor (instead of that of a proxy server).
       MD
@@ -53,8 +54,16 @@ module Agents
       return ["Not Authorized", 401] unless secret == options['secret']
 
       # check the verbs
+<<<<<<< HEAD
       # verbs = (interpolated['verbs'] || 'post').split(/,/).map { |x| x.strip.downcase }.select { |x| x.present? }
       # return ["Please use #{verbs.join('/').upcase} requests only", 401] unless verbs.include?(method)
+=======
+      verbs = (interpolated['verbs'] || 'post').split(/,/).map { |x| x.strip.downcase }.select { |x| x.present? }
+      return ["Please use #{verbs.join('/').upcase} requests only", 401] unless verbs.include?(method)
+      
+      # check the code
+      code = (interpolated['code'].presence || 201).to_i
+>>>>>>> 0fcd8e285ebe9c04fb6ce5abd5a1f776021bdf89
 
       # check the reCAPTCHA response if required
       if recaptcha_secret = interpolated['recaptcha_secret'].presence
@@ -86,7 +95,11 @@ module Agents
         create_event(payload: payload)
       end
 
+<<<<<<< HEAD
       [response_message, 200]
+=======
+      [interpolated(params)['response'] || 'Event Created', code]
+>>>>>>> 0fcd8e285ebe9c04fb6ce5abd5a1f776021bdf89
     end
 
     def working?
@@ -97,14 +110,14 @@ module Agents
       unless options['secret'].present?
         errors.add(:base, "Must specify a secret for 'Authenticating' requests")
       end
+
+      if options['code'].present? && options['code'].to_s !~ /\A\s*(\d+|\{.*)\s*\z/
+        errors.add(:base, "Must specify a code for request responses")
+      end
     end
 
     def payload_for(params)
       Utils.value_at(params, interpolated['payload_path']) || {}
-    end
-
-    def response_message
-      interpolated['response'] || 'Event Created'
     end
   end
 end

@@ -24,8 +24,6 @@ class Agent < ActiveRecord::Base
 
   EVENT_RETENTION_SCHEDULES = [["Forever", 0], ['1 hour', 1.hour], ['6 hours', 6.hours], ["1 day", 1.day], *([2, 3, 4, 5, 7, 14, 21, 30, 45, 90, 180, 365].map {|n| ["#{n} days", n.days] })]
 
-  attr_accessible :options, :memory, :name, :type, :schedule, :controller_ids, :control_target_ids, :disabled, :source_ids, :receiver_ids, :scenario_ids, :keep_events_for, :propagate_immediately, :drop_pending_events
-
   json_serialize :options, :memory
 
   validates_presence_of :name, :user
@@ -46,7 +44,7 @@ class Agent < ActiveRecord::Base
   after_save :possibly_update_event_expirations
 
   belongs_to :user, :inverse_of => :agents
-  belongs_to :service, :inverse_of => :agents
+  belongs_to :service, :inverse_of => :agents, optional: true
   has_many :events, -> { order("events.id desc") }, :dependent => :delete_all, :inverse_of => :agent
   has_one  :most_recent_event, -> { order("events.id desc") }, :inverse_of => :agent, :class_name => "Event"
   has_many :logs,  -> { order("agent_logs.id desc") }, :dependent => :delete_all, :inverse_of => :agent, :class_name => "AgentLog"
@@ -445,7 +443,7 @@ class AgentDrop
     @object.short_type
   end
 
-  [
+  METHODS = [
     :name,
     :type,
     :options,
@@ -458,7 +456,9 @@ class AgentDrop
     :disabled,
     :keep_events_for,
     :propagate_immediately,
-  ].each { |attr|
+  ]
+
+  METHODS.each { |attr|
     define_method(attr) {
       @object.__send__(attr)
     } unless method_defined?(attr)
